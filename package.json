@@ -1,0 +1,27 @@
+{
+  "name": "petersondesign",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+"scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "minify:footer": "node build/minify-footer.js",
+    "watch:footer": "chokidar \"in-development/footer-code.js\" -c \"npm run minify:footer\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/noelap/petersondesign-js.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/noelap/petersondesign-js/issues"
+  },
+  "homepage": "https://github.com/noelap/petersondesign-js#readme",
+  "devDependencies": {
+    "chokidar-cli": "^3.0.0",
+    "terser": "^5.43.1"
+  }
+}
