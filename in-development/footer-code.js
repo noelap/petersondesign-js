@@ -62,62 +62,7 @@ elements.forEach(el => {
    Mobile Menu Scripts
    -------------------------------------------------- */
 
-/*
-  Menu Toggle with Scroll Lock
-  --------------------------------------------------
-  This script toggles a `.menu-open` class on the <body> element to open/close a menu.
-  It locks the page scroll when the menu is open by fixing the body's position
-  and restores scroll position smoothly on close.
-  It also automatically closes the menu on window resize above a breakpoint (992px).
-*/
 
-document.addEventListener("DOMContentLoaded", function () {
-  
-  /* Grab the menu toggle button by its ID */
-  const toggle = document.getElementById("menu-trigger");
-  const body = document.body;
-  const html = document.documentElement; // Currently unused but often useful
-  let scrollPosition = 0; // Store scroll position to restore later
-
-  /* Open menu: save scroll position, lock scroll by fixing body */
-  function openMenu() {
-	scrollPosition = window.scrollY;
-	body.style.top = `-${scrollPosition}px`; // Prevent scroll jump by offsetting body top
-	body.classList.add("menu-open", "menu-locked"); // Add classes to control styles/scroll lock
-  }
-
-  /* Close menu: restore scroll, remove lock, handle closing animation */
-  function closeMenu() {
-	body.classList.add("menu-closing"); // Add a class for CSS transition if needed
-	body.classList.remove("menu-open", "menu-locked");
-	body.style.top = ""; // Reset top style
-	window.scrollTo(0, scrollPosition); // Restore previous scroll position
-
-	/* Remove closing class after transition duration (400ms here) */
-	setTimeout(() => {
-	  body.classList.remove("menu-closing");
-	}, 400);
-  }
-
-  /* Automatically close menu if window resized above 992px breakpoint */
-  function closeMenuOnResize() {
-	if (window.innerWidth >= 992 && body.classList.contains("menu-open")) {
-	  closeMenu();
-	}
-  }
-
-  /* Click handler toggles menu open/close */
-  toggle?.addEventListener("click", function () {
-	if (body.classList.contains("menu-open")) {
-	  closeMenu();
-	} else {
-	  openMenu();
-	}
-  });
-
-  /* Watch for window resize and close menu if needed */
-  window.addEventListener("resize", closeMenuOnResize);
-});
 
 
 /*
@@ -403,4 +348,3 @@ document.addEventListener("DOMContentLoaded", () => {
   /* Start observing each .media-item element */
   mediaItems.forEach(el => observer.observe(el));
 });
-
