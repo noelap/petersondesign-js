@@ -59,7 +59,7 @@ elements.forEach(el => {
 
 
 /* --------------------------------------------------
-   Mobile Menu Scripts
+   Mobile Menu Overlay Scripts
    -------------------------------------------------- */
 
 /*

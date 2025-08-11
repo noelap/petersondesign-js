@@ -1,5 +1,5 @@
 /**
- * Head Code: Flicker Prevention Script
+ * Head Code: Flicker Prevention Script (also requires CSS)
  * ------------------------------------
  * After the DOM is ready, this script sets the html element’s opacity and visibility
  * back to visible with a tiny delay to ensure the page renders smoothly without flicker.
