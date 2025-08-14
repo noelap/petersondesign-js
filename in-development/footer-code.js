@@ -19,34 +19,20 @@ Usage:
 
 
 document.addEventListener("DOMContentLoaded", function () {
-// Select all h2 elements without the widow-fix-off class (default targets)
-const defaultFix = document.querySelectorAll('h2:not(.widow-fix-off)');
+  const defaultFix = document.querySelectorAll('h2:not(.widow-fix-off)');
+  const forceFix = document.querySelectorAll('.widow-fix-on');
+  const elements = new Set([...defaultFix, ...forceFix]);
 
-// Select any element with widow-fix-on class (forced targets)
-const forceFix = document.querySelectorAll('.widow-fix-on');
+  elements.forEach(el => {
+    let text = el.innerHTML.replace(/(\w)-(\w)/g, '$1&#8209;$2');
+    const words = text.trim().split(' ');
 
-// Combine both sets into one to avoid duplicates
-const elements = new Set([...defaultFix, ...forceFix]);
-
-// Loop through each element to apply the widow fix
-elements.forEach(el => {
-  // Replace hyphens surrounded by word characters with non-breaking hyphens
-  // This prevents line breaks at hyphens
-  let text = el.innerHTML.replace(/(\w)-(\w)/g, '$1&#8209;$2');
-
-  // Split the text into words by spaces
-  const words = text.trim().split(' ');
-
-  // Only apply fix if there are more than two words
-  if (words.length > 2) {
-	// Join the last two words with a non-breaking space (&nbsp;)
-	words[words.length - 2] += '&nbsp;' + words[words.length - 1];
-	words.pop(); // Remove the last word, now merged with the previous
-
-	// Update the element's innerHTML with the new text
-	el.innerHTML = words.join(' ');
-  }
-});
+    if (words.length > 2) {
+      words[words.length - 2] += '&nbsp;' + words[words.length - 1];
+      words.pop();
+      el.innerHTML = words.join(' ');
+    }
+  });
 });
 
 
@@ -73,7 +59,7 @@ elements.forEach(el => {
 (function () {
   function initMenu() {
     const toggle = document.getElementById("menu-trigger");
-    if (!toggle) return; // Exit if toggle not found
+    if (!toggle) return;
 
     const body = document.body;
     let scrollPosition = 0;
@@ -112,7 +98,6 @@ elements.forEach(el => {
     window.addEventListener("resize", closeMenuOnResize);
   }
 
-  // Wait for BOTH DOMContentLoaded and Webflow's scripts to be ready
   document.addEventListener("DOMContentLoaded", function () {
     if (window.Webflow && typeof window.Webflow.push === "function") {
       window.Webflow.push(initMenu);
@@ -138,17 +123,13 @@ elements.forEach(el => {
 
 window.addEventListener("load", function () {
   setTimeout(() => {
-	const body = document.body;
+    const body = document.body;
 
-	// Check if scroll lock remains but menu is closed
-	if (body.classList.contains("menu-locked") && !body.classList.contains("menu-open")) {
-	  body.classList.remove("menu-locked");  // Remove scroll lock class
-	  body.style.top = "";                    // Reset top style to allow scrolling
-
-	  // Optional: scroll back to top or last position (commented out)
-	  // window.scrollTo(0, 0);
-	}
-  }, 300); // Delay to ensure Webflow page load animations are complete
+    if (body.classList.contains("menu-locked") && !body.classList.contains("menu-open")) {
+      body.classList.remove("menu-locked");
+      body.style.top = "";
+    }
+  }, 300);
 });
 
 
@@ -164,8 +145,8 @@ window.addEventListener("load", function () {
 */
 
 window.addEventListener("pageshow", function () {
-  document.body.classList.remove("menu-open");      // Close mobile menu overlay
-  document.documentElement.classList.remove("no-scroll"); // Re-enable page scrolling
+  document.body.classList.remove("menu-open");
+  document.documentElement.classList.remove("no-scroll");
 });
 
 
@@ -202,33 +183,28 @@ window.addEventListener("pageshow", function () {
 	- .reset-on-load → class for videos that should reset to 0 on page load
   */
 
-  document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
 
-	// Select all video wrapper elements
 	const wrappers = document.querySelectorAll(".video-wrapper");
 
-	// Fade out and remove fallback image
 	const fadeOutFallback = (fallback) => {
 	  if (fallback && fallback.style.opacity !== "0") {
 		fallback.style.opacity = "0";
-		setTimeout(() => fallback.remove(), 600); // Remove after fade-out
+		setTimeout(() => fallback.remove(), 600);
 	  }
 	};
 
-	// Main function to handle video playback attempts
 	const handleVideoPlayback = (video, fallback, playBtn) => {
-	  video.muted = true; // Mute to allow autoplay in most browsers
+	  video.muted = true;
 	  const autoplayAttempt = video.play();
 
 	  if (autoplayAttempt !== undefined) {
 		autoplayAttempt
 		  .then(() => {
-			// Autoplay succeeded
 			fallback && (fallback.style.display = "none");
 			playBtn && (playBtn.style.display = "none");
 			video.style.display = "block";
 
-			// Fade out fallback once video is playing
 			if (video.readyState >= 3) {
 			  fadeOutFallback(fallback);
 			} else {
@@ -236,7 +212,6 @@ window.addEventListener("pageshow", function () {
 			}
 		  })
 		  .catch(() => {
-			// Autoplay failed — set up manual play option
 			video.setAttribute("controls", true);
 			video.classList.add("needs-play-button");
 
@@ -244,7 +219,6 @@ window.addEventListener("pageshow", function () {
 			playBtn && (playBtn.style.display = "block");
 			video.style.display = "none";
 
-			// On play button click, show video and hide fallback
 			playBtn?.addEventListener("click", () => {
 			  video.style.display = "block";
 			  fallback && (fallback.style.display = "none");
@@ -259,7 +233,6 @@ window.addEventListener("pageshow", function () {
 	  }
 	};
 
-	// Observer to autoplay videos when they come into view
 	const videoObserver = new IntersectionObserver((entries) => {
 	  entries.forEach(entry => {
 		if (!entry.isIntersecting) return;
@@ -269,17 +242,15 @@ window.addEventListener("pageshow", function () {
 		const fallback = wrapper.querySelector(".video-fallback-img");
 		const playBtn = wrapper.querySelector(".video-play-btn");
 
-		// Prevent handling same video twice
 		if (video.dataset.autoplayHandled) return;
 		video.dataset.autoplayHandled = true;
 
 		handleVideoPlayback(video, fallback, playBtn);
 	  });
 	}, {
-	  threshold: 0.6 // At least 60% in view to trigger autoplay
+	  threshold: 0.6
 	});
 
-	// Loop over each video wrapper
 	wrappers.forEach(wrapper => {
 	  const video = wrapper.querySelector("video");
 	  if (!video) return;
@@ -287,8 +258,8 @@ window.addEventListener("pageshow", function () {
 	  const fallback = wrapper.querySelector(".video-fallback-img");
 	  const playBtn = wrapper.querySelector(".video-play-btn");
 
-	  const isHero = video.classList.contains("video-hero"); // Always play immediately
-	  const isScrollTriggered = video.classList.contains("media-item"); // Play when in view
+	  const isHero = video.classList.contains("video-hero");
+	  const isScrollTriggered = video.classList.contains("media-item");
 
 	  if (isHero) {
 		handleVideoPlayback(video, fallback, playBtn);
@@ -298,7 +269,6 @@ window.addEventListener("pageshow", function () {
 	  }
 	});
 
-	// Resets specific videos on full page load (avoids resuming from last position)
 	function resetVideosOnPageLoad() {
 	  const navigationType = performance.getEntriesByType('navigation')[0]?.type;
 	  if (navigationType !== 'back_forward') {
@@ -310,7 +280,7 @@ window.addEventListener("pageshow", function () {
 	}
 
 	resetVideosOnPageLoad();
-  });
+});
 
 
 /*
@@ -332,30 +302,24 @@ window.addEventListener("pageshow", function () {
 
 document.addEventListener("DOMContentLoaded", function () {
 
-  /* Create the IntersectionObserver with a 50% visibility threshold */
   const observer = new IntersectionObserver((entries) => {
 	entries.forEach(entry => {
 
 	  if (entry.isIntersecting) {
-		/* Video is in view — attempt to play */
 		const video = entry.target;
 		if (video.paused) {
-		  video.play().catch(() => {
-			/* Autoplay may fail — optional fallback could be added here */
-		  });
+		  video.play().catch(() => {});
 		}
 
 	  } else {
-		/* Video is out of view — pause playback */
 		entry.target.pause();
 	  }
 
 	});
   }, {
-	threshold: 0.5 // Trigger when 50% of the video is visible
+	threshold: 0.5
   });
 
-  /* Find all videos that should play on scroll and observe them */
   const scrollVideos = document.querySelectorAll("video.play-on-scroll");
   scrollVideos.forEach(video => observer.observe(video));
 
@@ -371,39 +335,23 @@ document.addEventListener("DOMContentLoaded", function () {
 */
 
 document.addEventListener("DOMContentLoaded", () => {
-  
-  /* Select all elements with the .media-item class */
+
   const mediaItems = document.querySelectorAll(".media-item");
 
-  /* 
-	Create an IntersectionObserver to watch when elements
-	cross into the viewport.
-  */
   const observer = new IntersectionObserver((entries, obs) => {
 	entries.forEach(entry => {
-	  /* If the element is visible enough to trigger */
 	  if (entry.isIntersecting) {
 		const el = entry.target;
-		
-		/* Apply transition styles for fade + upward slide */
 		el.style.transition = "opacity 0.9s cubic-bezier(0.4, 0, 0.2, 1), transform 0.9s cubic-bezier(0.4, 0, 0.2, 1)";
-		
-		/* Make element fully visible */
 		el.style.opacity = "1";
-		
-		/* Reset vertical position (slide into place) */
 		el.style.transform = "translateY(0)";
-		
-		/* Stop observing once animation has been triggered */
 		obs.unobserve(el);
 	  }
 	});
   }, {
-	/* Trigger when at least 15% of element is in view */
 	threshold: 0.15
   });
 
-  /* Start observing each .media-item element */
   mediaItems.forEach(el => observer.observe(el));
 });
 

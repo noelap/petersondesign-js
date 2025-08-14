@@ -10,11 +10,8 @@
 
 document.addEventListener("DOMContentLoaded", () => {
   setTimeout(() => {
-	// Make the page visible after a short delay
-	document.documentElement.style.opacity = "1";
-	document.documentElement.style.visibility = "visible";
-
-	// Remove the Webflow loading class to signal page load completion
-	document.documentElement.classList.remove("wf-loading");
+    document.documentElement.style.opacity = "1";
+    document.documentElement.style.visibility = "visible";
+    document.documentElement.classList.remove("wf-loading");
   }, 50);
 });
