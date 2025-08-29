@@ -162,7 +162,7 @@ window.addEventListener("pageshow", function () {
    Video Scripts
    -------------------------------------------------- */
 
-  /*
+/*
 	Video Autoplay Script
 	---------------------
 	Purpose:
@@ -233,6 +233,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	  }
 	};
 
+	// Observer for scroll-triggered videos
 	const videoObserver = new IntersectionObserver((entries) => {
 	  entries.forEach(entry => {
 		if (!entry.isIntersecting) return;
@@ -262,8 +263,15 @@ document.addEventListener("DOMContentLoaded", function () {
 	  const isScrollTriggered = video.classList.contains("media-item");
 
 	  if (isHero) {
-		handleVideoPlayback(video, fallback, playBtn);
-		video.dataset.autoplayHandled = true;
+		// Special case: autoplay immediately if it's a homepage hero
+		if (document.body.classList.contains("homepage")) {
+		  handleVideoPlayback(video, fallback, playBtn);
+		  video.dataset.autoplayHandled = true;
+		} else {
+		  // Default hero handling
+		  handleVideoPlayback(video, fallback, playBtn);
+		  video.dataset.autoplayHandled = true;
+		}
 	  } else if (isScrollTriggered) {
 		videoObserver.observe(wrapper);
 	  }
