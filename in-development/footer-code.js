@@ -181,7 +181,7 @@ window.addEventListener("pageshow", function () {
 	- .video-hero → class for videos that autoplay immediately
 	- .media-item → class for scroll-triggered videos
 	- .reset-on-load → class for videos that should reset to 0 on page load
-  */
+*/
 
 document.addEventListener("DOMContentLoaded", function () {
 
@@ -196,6 +196,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	const handleVideoPlayback = (video, fallback, playBtn) => {
 	  video.muted = true;
+
+	  // Force preload for hero videos so iOS doesn’t get stuck
+	  if (video.classList.contains("video-hero")) {
+		video.setAttribute("playsinline", "true");
+		video.setAttribute("preload", "auto");
+	  }
+
 	  const autoplayAttempt = video.play();
 
 	  if (autoplayAttempt !== undefined) {
@@ -233,7 +240,6 @@ document.addEventListener("DOMContentLoaded", function () {
 	  }
 	};
 
-	// Observer for scroll-triggered videos
 	const videoObserver = new IntersectionObserver((entries) => {
 	  entries.forEach(entry => {
 		if (!entry.isIntersecting) return;
@@ -263,15 +269,9 @@ document.addEventListener("DOMContentLoaded", function () {
 	  const isScrollTriggered = video.classList.contains("media-item");
 
 	  if (isHero) {
-		// Special case: autoplay immediately if it's a homepage hero
-		if (document.body.classList.contains("homepage")) {
-		  handleVideoPlayback(video, fallback, playBtn);
-		  video.dataset.autoplayHandled = true;
-		} else {
-		  // Default hero handling
-		  handleVideoPlayback(video, fallback, playBtn);
-		  video.dataset.autoplayHandled = true;
-		}
+		// Kick autoplay immediately on load
+		handleVideoPlayback(video, fallback, playBtn);
+		video.dataset.autoplayHandled = true;
 	  } else if (isScrollTriggered) {
 		videoObserver.observe(wrapper);
 	  }
